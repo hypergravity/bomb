@@ -1,0 +1,1 @@
+cd(bomb_dir_install)
