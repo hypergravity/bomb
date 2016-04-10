@@ -58,6 +58,14 @@ switch nargin
             set(0,'DefaultTextFontSize',15);        % text font size 
             set(0,'DefaultLineLineWidth',1.1);      % line width 
             set(0,'DefaultAxesTickLength',[0.015; 0.015]);  % axes tick length
+        elseif num == 2
+            set(0,'DefaultAxesXMinorTick','on');    % x minor tick
+            set(0,'DefaultAxesYMinorTick','on');    % y minor tick 
+%             set(0,'DefaultAxesFontSize',15);        % axes font size 
+%             set(0,'DefaultAxesLineWidth',1.0);      % axes line width 
+%             set(0,'DefaultTextFontSize',15);        % text font size 
+%             set(0,'DefaultLineLineWidth',1.1);      % line width 
+            set(0,'DefaultAxesTickLength',[0.015; 0.015]);  % axes tick length
         end
     otherwise
         error('@Cham: varargin error...');
