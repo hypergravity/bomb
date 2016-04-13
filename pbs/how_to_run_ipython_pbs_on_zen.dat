@@ -1,0 +1,85 @@
+# This is a note about how to run IPython cluster on ZEN in PBS mode
+
+# 0. ssh to log in:
+$ ssh -X zb@10.0.10.94
+
+# 1. install IPython on ZEN:
+# easy_install --user "ipython[all]"
+$ easy_install --user "ipython=3.1.0"
+
+# 2. creat an IPython profile "pbs"
+[zb@zen ~]$ ipython profile create --parallel --profile=pbs
+
+# 3. configure "ipcluster_config.py"
+[zb@zen ~]$ cd ~/.ipython/profile_pbs/
+[zb@zen profile_pbs]$ gedit ipcluster_config.py
+# add rows in the ipcluster_config.py
+# -------------------------------------------------------------------
+c.IPClusterStart.controller_launcher_class = 'PBSControllerLauncher'
+c.IPClusterEngines.engine_launcher_class = 'PBSEngineSetLauncher'
+# -------------------------------------------------------------------
+# save and exit
+
+# 4. make engine template
+[zb@zen profile_pbs]$ mkdir template
+[zb@zen profile_pbs]$ touch pbs.engine.template
+[zb@zen profile_pbs]$ gedit pbs.engine.template
+# -------------------------------------------------------------------
+#PBS -N ipython
+#PBS -j oe
+#PBS -l walltime=00:10:00
+#PBS -l nodes={n//4}:ppn=4
+#PBS -q {queue}
+
+cd $PBS_O_WORKDIR
+export PATH=$PATH:/usr/local/bin
+export PYTHONPATH=$PYTHONPATH:/share/apps/python/lib/python2.7/site-packages/
+export PYTHONPATH=$PYTHONPATH:$HOME/local
+mpiexec -n {n} ipengine --profile-dir={profile_dir}
+# -------------------------------------------------------------------
+{prifile_dir} should be set to "/home/zb/.ipython/profile_pbs/template"
+
+# 5. make controller template
+[zb@zen profile_pbs]$ touch pbs.controller.template
+[zb@zen profile_pbs]$ gedit pbs.controller.template
+# -------------------------------------------------------------------
+#PBS -N ipython
+#PBS -j oe
+#PBS -l walltime=00:10:00
+#PBS -l nodes=1:ppn=4
+#PBS -q {queue}
+
+cd $PBS_O_WORKDIR
+export PATH=$PATH:/usr/local/bin
+export PYTHONPATH=$PYTHONPATH:/share/apps/python/lib/python2.7/site-packages/
+export PYTHONPATH=$PYTHONPATH:$HOME/local
+ipcontroller --profile-dir={profile_dir}
+# -------------------------------------------------------------------
+
+# 6. configure ipcluster_config.py
+[zb@zen profile_pbs]$ gedit ipcluster_config.py
+# -------------------------------------------------------------------
+c.PBSControllerLauncher.batch_template_file = u'pbs.controller.template'
+c.PBSEngineSetLauncher.batch_template_file = u'pbs.engine.template'
+# -------------------------------------------------------------------
+
+# the extra configurables available are:
+# the number of engines to launch {n}
+# the batch system queue to which the jobs are to be submitted {queue}
+
+# to specify in ipcluster_config.py:
+# -------------------------------------------------------------------
+c.PBSLauncher.queue = 'veryshort.q'
+c.IPClusterEngines.n = 64
+# -------------------------------------------------------------------
+
+# 7. 
+[zb@zen profile_pbs]$ gedit ipcontroller_config.py 
+# -------------------------------------------------------------------
+c.HubFactory.ip = '*'
+# -------------------------------------------------------------------
+
+
+
+
+
