@@ -38,10 +38,8 @@ function s = struct_value_to_string(v)
             s = sprintf('%.5f', v);
         end
     elseif ischar(v)
-        s = v;
+        s = sprintf('''%s''', v);
     else
         error('@Cham: struct contains invalid value types!\n');
     end
 end
-    
-
