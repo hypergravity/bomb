@@ -1,4 +1,4 @@
-function [ fig, axs ] = subplots( nrow,ncol,left,bottom,width,height,hspace,vspace)
+function [ fig, axs ] = subplots_tight( nrow,ncol,left,bottom,width,height,hspace,vspace)
 % Written by: 		Bo Zhang (NAOC, bozhang@nao.cas.cn)
 % Last modified: 	29-Mar-2016
 % 
